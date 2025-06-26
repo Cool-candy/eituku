@@ -1,12 +1,35 @@
-print("<h1>HOWZAT</h1>")
 import hashlib
 import sys
 import json
+import urllib.request
+from urllib.parse import urlparse
+
 
 def run1():
 	inp=sys.argv[2]
 	#print(inp)
-	short=hashlib.md5(inp.encode())
+	def get_full_url(inp):
+    		parsed_url = urlparse(inp)
+    		if not parsed_url.scheme:
+    		    inp = f"https://{inp}"
+    		# Make a request and follow redirects using urllib
+    		response = urllib.request.urlopen(inp)
+    
+    		# Get the final URL after redirects
+    		full_url = response.geturl()
+    
+    		# Parse the full URL to extract its scheme (http, https, ftp, etc.)
+    		parsed_url = urlparse(full_url)
+    		scheme = parsed_url.scheme  # This will give you the protocol (http, https, ftp, etc.)
+    
+    		# Return the full URL and its scheme
+    		return full_url, scheme
+
+	# Test the function
+	full_url, scheme = get_full_url(inp)
+	#print(f"Full URL: {full_url}")
+	#print(f"Scheme: {scheme}")
+	short=hashlib.md5(full_url.encode())
 	short=short.hexdigest()
 	#print(short)
 	#print(len(short))
@@ -32,7 +55,7 @@ def run1():
 				posval=str(posval) 
 			#print(posval)
 			finshort=finshort+posval
-		entryy={"url":inp,"hash":short,"short":finshort}
+		entryy={"url":full_url,"hash":short,"short":finshort}
 		with open('myapp/scripts/dbbase.json', 'r+') as f:
 			f.seek(0,2)
 			a=f.tell()
@@ -41,7 +64,7 @@ def run1():
 			f.write(',\n')
 			json.dump(entryy,f,indent=4)
 			f.write('\n]')
-	finshort=('http://ei.tuku/'+finshort)
+	finshort=('http://eituku.onrender.com/'+finshort)
 	print(finshort)
 	
 def run2():
