@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-=gdlw%jgky^7+d+ws=j&sdt&xi!df-(x7x9xgo2nngmeps%_ee
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://eituku.onrender.com/']
+ALLOWED_HOSTS = ['eituku.onrender.com']
 
 
 # Application definition
