@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EiTuku</title>
+</head>
+<body>
+		<h1 align=center>Welcome to EiTuku URL Shortening Service</h1>
+		<br>
+		<div align="center">
+		<form name="mainForm" id="mainForm"  action="" method="POST" style = "font-size:150%;" >
+			<input type="radio" name="todo" value="generate" style = "cursor: pointer;" onclick="vanish()" checked=1>Generate
+			&emsp;&emsp;
+			<input type="radio" name="todo" value="redirect" style = "cursor: pointer;" onclick="vanish()">Redirect
+			<br><br>
+
+			<div id="generate" style="display:block;">
+				<fieldset>
+				<legend>Generate a Short URL</legend>
+				<br>
+				Enter the URL you want to shorten:
+				<input type="text" id="url" name="url" placeholder="https://url" style="width:90vmin; font-size:150%;">
+				<span style = "color : red; white-space : nowrap;" id="url_error"></span>
+				<br><br>
+				<div style="color:red;float:left;font-size:65%;">
+					<i style="">*Only valid, safe, and secured https links are allowed. Links with autoredirects will also not work.</i>
+				</div>
+				<br>
+				</fieldset>
+				<div id="oputGen" align="center" style="font-size:120%;line-height:2;letter-spacing:2px;word-spacing:3px;display:none;">
+				The URL you entered is &ldquo;<span id="ipurl"></span>&rdquo;<br>The corresponding shortened URL is &ldquo;<span 							id="opurl"></span>&rdquo;<br>Press the button below to copy the generated URL<br>
+				<input type="button" name="copyGen" value="COPY" onclick="">		
+				</div>
+			</div>
+			
+			<div id="redirect" style="display:none;">
+				<fieldset>
+				<legend>Get Redirected from a Short URL</legend>
+				<br>
+				Enter the Short URL/Code you have:
+				<input type="text" id="short" name="short" placeholder="https://eituku.onrender.com/" style="width:90vmin; font-size:150%;">
+				<span style="color : red; white-space : nowrap;" id="short_error"></span>
+				<br><br>
+				</fieldset>
+				<div id="oputRed" align="center" style="font-size:120%;line-height:2;letter-spacing:2px;word-spacing:3px;display:none;">
+				The EiTuku Short Code you entered is &ldquo;<span id="ipshort"></span>&rdquo;<br>The corresponding original URL is &ldquo;<span 					id="iniurl"></span>&rdquo;<br>
+				Press the button below to copy the generated URL<br>
+				<input type="button" name="copyRed" value="COPY" onclick="">		
+				</div>
+			</div>
+			<br>
+			<button type="submit" style = "font-size:130%; font-weight:bold; cursor: pointer;" >GO</button>
+		</form></div>
+		<br>
+		<div id="finop">abcdefghijklmnopqrstuvwxyz</div>
+		
+		
+
+<script type="text/javascript">
+function vanish()
+{
+if(document.mainForm.todo[0].checked)
+{
+document.getElementById("generate").style.display="block";
+document.getElementById("redirect").style.display="none";
+document.getElementById("finop").innerHTML="abcdefghijklmnopqrstuvwxyz";
+document.getElementById("short").style="initial";
+document.getElementById("short").style.fontSize = "150%"; 
+document.getElementById("short").style.width = "90vmin";
+document.getElementById("short_error").innerHTML="";
+}
+else
+{
+document.getElementById("generate").style.display="none";
+document.getElementById("redirect").style.display="block";
+document.getElementById("finop").innerHTML="abcdefghijklmnopqrstuvwxyz";
+document.getElementById("url").style="initial;";
+document.getElementById("url").style.fontSize = "150%"; 
+document.getElementById("url").style.width = "90vmin";
+document.getElementById("url_error").innerHTML="";
+}
+}
+
+function validateGen()
+{
+if(document.getElementById("url").value=="")
+{
+document.getElementById("url").style.borderColor="red";
+document.getElementById("url_error").innerHTML="Please enter a URL";
+}
+else
+{
+document.getElementById("url").style="initial";
+document.getElementById("url_error").innerHTML="";
+document.getElementById("ipurl").innerHTML=document.getElementById("url").value;
+}
+}
+
+function validateRed()
+{
+if(document.getElementById("short").value=="")
+{
+document.getElementById("short").style.borderColor="red";
+document.getElementById("short_error").innerHTML="Please enter an EiTuku Short Code";
+}
+else
+{
+document.getElementById("short").style="initial";
+document.getElementById("short_error").innerHTML="";
+document.getElementById("ipshort").innerHTML=document.getElementById("short").value;
+}
+}
+
+const form = document.getElementById('mainForm');
+
+function sendAjaxRequest(url, method, data, callback) {
+  var xhr = new XMLHttpRequest();
+  xhr.open(method, url);
+
+  xhr.onload = function() {
+    if (xhr.status >= 200 && xhr.status < 300) {
+      callback(null, xhr.response); // Success
+    } else {
+      callback(xhr.status, xhr.response); // Error
+    }
+  };
+
+  xhr.onerror = function() {
+    callback('Network Error');
+  };
+
+      xhr.setRequestHeader('Content-Type', 'application/json'); // For form data
+      xhr.send(data);
+  }
+
+ form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            document.getElementById("finop").innerHTML="abcdefghijklmnopqrstuvwxyz";
+
+            const urlInput = document.getElementById('url');
+            const url = urlInput.value;
+            
+            const shortInput = document.getElementById('short');
+            const short = shortInput.value;
+
+            const formdata = new FormData(form);
+            const todo = formdata.get('todo');
+            //alert(short)
+
+            let verified;
+
+            if(todo=="generate")
+            {
+            verified = 0;
+            do {
+            if(document.getElementById("url").value=="")
+            	{
+            	document.getElementById("url").style.borderColor = "red";
+            	document.getElementById("url_error").innerHTML="Please enter a URL";
+            	verified = 1;
+            	break;
+            	}
+
+            if(url.includes(' '))
+            	{
+            	document.getElementById("url").style.borderColor = "red";
+            	document.getElementById("url_error").innerHTML="Space not allowed";
+            	verified = 1;
+            	break;
+            	}
+
+            if(!url.includes('.'))
+            	{
+            	document.getElementById("url").style.borderColor = "red";
+            	document.getElementById("url_error").innerHTML="must contain atleast one &quot;.&quot;";
+            	verified = 1;
+            	break;
+            	}
+
+            }
+            while(verified == 2);
+            }
+
+            else
+            {
+            verified = 0;
+            do {
+            if(document.getElementById("short").value=="")
+            	{
+            	document.getElementById("short").style.borderColor = "red";
+            	document.getElementById("short_error").innerHTML="Please enter an EiTuku Short Code";
+            	verified = 1;
+            	break;
+            	}
+
+            if(short.includes(' '))
+            	{
+            	document.getElementById("short").style.borderColor = "red";
+            	document.getElementById("short_error").innerHTML="Space not allowed";
+            	verified = 1;
+            	break;
+            	}
+
+            if(short.length < 8 || short.length > 37)
+            	{
+            	document.getElementById("short").style.borderColor = "red";
+            	document.getElementById("short_error").innerHTML="length mismatch";
+            	verified = 1;
+            	break;
+            	}
+
+            if(short.length == 8 && /[^a-zA-Z0-9]/.test(short)==true)
+            	{
+            	document.getElementById("short").style.borderColor = "red";
+            	document.getElementById("short_error").innerHTML="only alphanumeric characters allowed";
+            	verified = 1;
+            	break;
+            	}
+
+            if(short.length > 8 && short.match("eituku.onrender.com") == null)
+            	{
+            	document.getElementById("short").style.borderColor = "red";
+            	document.getElementById("short_error").innerHTML="type a proper url/code";
+            	verified = 1;
+            	break;
+            	}
+            }
+            while(verified == 2);
+            }
+            
+            if(verified ==0)
+            	{
+            	document.getElementById("url").style="initial;";
+            	document.getElementById("url").style.fontSize = "150%"; 
+            	document.getElementById("url").style.width = "90vmin";
+            	document.getElementById("url_error").innerHTML="";
+            	document.getElementById("ipurl").innerHTML=document.getElementById("url").value;
+            	document.getElementById("short").style="initial";
+            	document.getElementById("short").style.fontSize = "150%"; 
+            	document.getElementById("short").style.width = "90vmin";
+            	document.getElementById("short_error").innerHTML="";
+            	document.getElementById("ipshort").innerHTML=document.getElementById("short").value;
+            	
+            const taskInput = {
+            	url: url,
+            	short: short,
+            	todo: todo
+            };
+            const encodedTask = JSON.stringify(taskInput);
+
+            sendAjaxRequest('/ranning/', 'POST', encodedTask, function(error, response) {
+                if (error) {
+                    console.error('AJAX Error:', error);
+                    alert('An error occurred while submitting the task.');
+                } else {
+                    try {
+                        const data = JSON.parse(response);
+                        if (data.status === 'success') {
+                            var msg='Request processed successfully!'+data.output
+                            document.getElementById("finop").innerHTML=msg;
+                            urlInput.value = ''; // Clear the input field
+                            shortInput.value = ''; // Clear the input field
+                        } else if (data.error) {
+                            alert('Error: ' + data.error);
+                        } else {
+                            alert('Unknown response from server.');
+                        }
+                    } catch (e) {
+                        console.error('JSON parse error:', e);
+                        alert('An error occurred processing the server response.');
+                    }
+                }
+            });
+            	}
+        });
+</script>
+</body>
+</html>
